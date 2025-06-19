@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Statement</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .invoice { border: 1px solid red; padding: 20px; max-width: 800px; margin: auto; }
+        .invoice-header { text-align: center; border:1px solid red; padding-bottom: 18px; }
+        .invoice-header h1 { margin: 0; color: red; }
+        .invoice-header p { margin: 2px 0; }
+        .invoice-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .invoice-table th, .invoice-table td { border: 1px solid red; padding: 8px; text-align: left; }
+        .invoice-table th { background-color: #f2f2f2; }
+        .invoice-total { width: 100%; margin-top: 20px; text-align: right; }
+        .invoice-total table { width: 50%; float: right; border-collapse: collapse; }
+        .invoice-total th, .invoice-total td { border: 1px solid red; padding: 8px; }
+        .invoice-signature { margin-top: 40px; text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="invoice" id="invoice">
+        <div class="invoice-header">
+            <h1>SADHASIVA AGENCIES</h1>
+            <p>4/53, Bhairavi Nagar, Puliyankulam,</p>
+            <p>Inamreddiyapatti Post, Virudhunagar - 626 003.</p>
+            <p>Cell: 88258 08813, 91596 84261</p>
+        </div>
+        <h2 style="text-align: center;">Ledger Statement</h2>
+        <p style="text-align: center;">From {start_date} to {end_date}</p>
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Particulars</th>
+                    <th>Vch Type</th>
+                    <th>Vch No</th>
+                    <th>Debit</th>
+                    <th>Credit</th>
+                </tr>
+            </thead>
+            <tbody>
+                {item_rows}
+                <tr>
+                    <td colspan="4" style="text-align: right;"><strong>Total:</strong></td>
+                    <td><strong>₹{total_debit:.2f}</strong></td>
+                    <td><strong>₹{total_credit:.2f}</strong></td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: right;"><strong>Closing Balance:</strong></td>
+                    <td colspan="2"><strong>{closing_balance}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

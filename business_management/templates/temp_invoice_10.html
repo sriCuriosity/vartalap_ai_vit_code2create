@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .invoice { border: 1px solid red; padding: 20px; max-width: 800px; margin: auto; }
+        .invoice-header { text-align: center; border:1px solid red; padding-bottom: 18px; }
+        .invoice-header img { max-width: 100px; }
+        .invoice-header h1 { margin: 0; color: red; }
+        .invoice-header p { margin: 2px 0; }
+        .invoice-info { display: flex; justify-content: space-between; margin-top: 10px; }
+        .invoice-info div { width: 48%; }
+        .invoice-info .sales-to, .invoice-info .address { margin-top: 20px; }
+        .invoice-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .invoice-table th, .invoice-table td { border: 1px solid red; padding: 8px; text-align: left; }
+        .invoice-table th { background-color: #f2f2f2; }
+        .invoice-total { width: 100%; margin-top: 20px; text-align: right; }
+        .invoice-total table { width: 50%; float: right; border-collapse: collapse; }
+        .invoice-total th, .invoice-total td { border: 1px solid red; padding: 8px; }
+        .invoice-signature { margin-top: 40px; text-align: right; }
+    </style>
+</head>
+<body>
+    <div class="invoice" id="invoice">
+        <div class="invoice-header">
+            <h1>SADHASIVA AGENCIES</h1>
+            <p>4/53, Bhairavi Nagar, Puliyankulam,</p>
+            <p>Inamreddiyapatti Post, Virudhunagar - 626 003.</p>
+            <p>Cell: 88258 08813, 91596 84261</p>
+        </div>
+        <div class="invoice-info">
+            <div>
+                <p>No. <strong>10</strong></p>
+                <p class="sales-to">To: Customer A</p>
+                <p class="address">Address: 123 Main St</p>
+            </div>
+            <div>
+                <p style="text-align:right;">Date: </p>
+            </div>
+        </div>
+        <table class="invoice-table">
+            <thead>
+                <tr>
+                    <th>S.No.</th>
+                    <th>PARTICULARS</th>
+                    <th>QTY</th>
+                    <th>RATE</th>
+                    <th colspan="2">AMOUNT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>1</td><td>வெள்ளை</td><td>32 kg</td><td>₹23.00</td><td colspan='2'>₹736.00</td></tr><tr><td>2</td><td>நாட்டு</td><td>20 kg</td><td>₹30.00</td><td colspan='2'>₹600.00</td></tr><tr><td>3</td><td>கொள்ளு</td><td>50 kg</td><td>₹70.00</td><td colspan='2'>₹3500.00</td></tr>
+            </tbody>
+        </table>
+        <div class="invoice-total">
+            <table>
+                <tr>
+                    <th>TOTAL</th>
+                    <td>₹4836.00</td>
+                </tr>
+                <tr>
+                    <th>SGST % + CGST %</th>
+                    <td>Rs. 0.00</td>
+                </tr>
+                <tr>
+                    <th>GRAND TOTAL</th>
+                    <td>₹4836.00</td>
+                </tr>
+            </table>
+        </div>
+        <div class="invoice-signature">
+            <p>For <strong>SADHASIVA AGENCIES</strong></p>
+            <p>Signature</p>
+        </div>
+    </div>
+</body>
+</html>

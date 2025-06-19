@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ledger Account Statement</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .footer {
+            margin-top: 20px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>{name}</h2>
+        <p>{address}</p>
+        <p>{gstin}</p>
+        <p>Cell: {phone}</p>
+        <h3>{company_name}</h3>
+        <p>Ledger Account</p>
+        <p>{location}</p>
+        <p>{date_range}</p>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Particulars</th>
+                <th>Vch Type</th>
+                <th>Vch No</th>
+                <th>Debit</th>
+                <th>Credit</th>
+            </tr>
+        </thead>
+        <tbody>
+            {ledger_data}
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <p>By Closing Balance: {closing_balance}</p>
+        <p>Total: {total}</p>
+    </div>
+</body>
+</html>
+    
