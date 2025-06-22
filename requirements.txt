@@ -1,3 +1,9 @@
 PyQt5
 fuzzywuzzy
-python-Levenshtein 
+python-Levenshtein
+pandas
+matplotlib
+pyqtgraph
+prophet
+pystan
+squarify 

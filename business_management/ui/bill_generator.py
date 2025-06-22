@@ -273,7 +273,7 @@ class BillGeneratorWidget(QWidget):
             QMessageBox.critical(self, "Error", f"Failed to generate invoice: {str(e)}")
 
     def refresh_suggestions(self):
-        self.suggestions = self.db_manager.get_products()
+        self.suggestions = [p.name for p in self.db_manager.get_products()]
         self.item_entry_widget.set_suggestions(self.suggestions)
 
     def showEvent(self, event):

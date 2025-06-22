@@ -56,7 +56,18 @@ class BillDeleteWidget(QWidget):
             return
         bill = self.db_manager.get_bill(int(bill_number))
         if bill:
-            details = f"Bill Number: {bill.bill_number}\nCustomer: {bill.customer_key}\nDate: {bill.date}\nTotal: {bill.total_amount}\nType: {bill.transaction_type}\nRemarks: {bill.remarks}\nItems: {bill.items}"
+            details = f"Bill Number: {bill.bill_number}\n"
+            details += f"Customer: {bill.customer_key}\n"
+            details += f"Date: {bill.date}\n"
+            details += f"Total Amount: ${bill.total_amount:.2f}\n"
+            details += f"Transaction Type: {bill.transaction_type}\n"
+            details += f"Remarks: {bill.remarks if bill.remarks else 'None'}\n\n"
+            details += "Items:\n"
+            for idx, item in enumerate(bill.items, start=1):
+                details += f"  {idx}. \t"
+                for key, value in item.items():
+                    details += f"     {key}: {value}\t"
+                details += "\t"
             self.details_text.setText(details)
         else:
             self.details_text.setText("Bill not found.")
@@ -73,3 +84,4 @@ class BillDeleteWidget(QWidget):
                 self.refresh_bill_numbers()
             else:
                 QMessageBox.warning(self, "Error", f"Failed to delete bill {bill_number}.") 
+                
