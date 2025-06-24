@@ -5,7 +5,7 @@ requests
 opencv-python
 pillow
 numpy
-tensorflow
+tensorflow==2.13.0
 torch
 torchvision
 transformers
@@ -19,3 +19,7 @@ pandas
 reportlab
 qrcode
 pyzbar
+keras
+prophet 
+layoutlm
+tensorflow-gpu
