@@ -113,20 +113,22 @@ class ExpenseDashboardWidget(QWidget):
         # For simplicity, use daily sums
         bills = self.db_manager.get_bills(start, end)
         bills_df = pd.DataFrame([{ 'date': b.date, 'revenue': b.total_amount } for b in bills])
+        all_dates = pd.date_range(start, end)
         if not bills_df.empty:
             bills_df['date'] = pd.to_datetime(bills_df['date'])
             bills_df = bills_df.groupby('date').sum().sort_index()
+            bills_df = bills_df.reindex(all_dates, fill_value=0)
+        else:
+            bills_df = pd.DataFrame({'revenue': [0]*len(all_dates)}, index=all_dates)
         expenses = expense_summary['expenses']
         exp_df = pd.DataFrame([{ 'date': e.date, 'expense': e.amount } for e in expenses])
+        all_dates = pd.date_range(start, end)
         if not exp_df.empty:
             exp_df['date'] = pd.to_datetime(exp_df['date'])
             exp_df = exp_df.groupby('date').sum().sort_index()
-        all_dates = pd.date_range(start, end)
-        bills_df = bills_df.reindex(all_dates, fill_value=0)
-        if not isinstance(exp_df, pd.DataFrame):
-            exp_df = pd.DataFrame(index=all_dates)
-        if 'expense' not in exp_df.columns:
-            exp_df['expense'] = 0
+            exp_df = exp_df.reindex(all_dates, fill_value=0)
+        else:
+            exp_df = pd.DataFrame({'expense': [0]*len(all_dates)}, index=all_dates)
         profit_series = bills_df['revenue'] - exp_df['expense']
         self.ax.plot(all_dates, bills_df['revenue'], label='Revenue')
         self.ax.plot(all_dates, exp_df['expense'], label='Expenses')

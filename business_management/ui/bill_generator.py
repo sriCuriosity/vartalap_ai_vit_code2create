@@ -23,7 +23,7 @@ class BillGeneratorWidget(QWidget):
         self.items = []
         self.db_manager = DBManager(DB_PATH)
         self.bill_number_path = os.path.join(os.path.dirname(__file__), '../../Bill Number.txt')
-        self.template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../business_management/templates/invoice_template.html'))
+        self.template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../business_management/templates/invoice_vr_template.html'))
         self.bill_number = self.get_current_bill_number()
         self.suggestions = self.db_manager.get_products()
         self.init_ui()
@@ -244,26 +244,42 @@ class BillGeneratorWidget(QWidget):
             if transaction_type == "Debit":
                 self.generate_html_invoice(bill)
             QMessageBox.information(self, "Success", "Transaction recorded successfully!")
-            self.clear_form()
+            #self.clear_form()
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to record transaction: {str(e)}")
+
+    def get_billing_year(self):
+        now = datetime.datetime.now()
+        if now.month < 4:  # January, February, March
+            return str(now.year - 1)
+        else:
+            return str(now.year)
 
     def generate_html_invoice(self, bill):
         # Load template
         try:
             with open(self.template_path, "r", encoding="utf-8") as f:
                 template = f.read()
-            customer = CUSTOMERS.get(bill.customer_key, {"name": bill.customer_key, "address": ""})
+            customer = CUSTOMERS.get(bill.customer_key, {"name": bill.customer_key, "address": "", "gstin": ""})
             item_rows = ""
+            subtotal = 0.0
             for idx, item in enumerate(bill.items):
-                item_rows += f"<tr><td>{idx+1}</td><td>{item['name'].split()[0]}</td><td>{item['quantity']} kg</td><td>₹{item['price']:.2f}</td><td colspan='2'>₹{item['total']:.2f}</td></tr>"
+                hsn_code = item.get('hsn_code', '')
+                item_rows += f"<tr><td>{idx+1}</td><td>{item['name'].split('(')[0].strip()}</td><td>01008001</td><td>{item['quantity']}</td><td>{item['price']:.2f}</td><td>{item['total']:.2f}</td></tr>"
+                subtotal += item['total']
+            total = bill.total_amount
+            amount_in_words = self.number_to_words(int(total))
             html_content = template.format(
                 bill_number=bill.bill_number,
                 customer_name=customer["name"],
                 customer_address=customer["address"],
+                customer_gstin=customer.get("gstin", ""),
                 date=bill.date,
                 item_rows=item_rows,
-                total=f"₹{bill.total_amount:.2f}"
+                subtotal=f"₹{subtotal:.2f}",
+                total=f"₹{total:.2f}",
+                amount_in_words=amount_in_words,
+                billing_year=self.get_billing_year()
             )
             temp_html_path = os.path.join(os.path.dirname(self.template_path), f"temp_invoice_{bill.bill_number}.html")
             with open(temp_html_path, "w", encoding="utf-8") as file:
@@ -271,6 +287,24 @@ class BillGeneratorWidget(QWidget):
             webbrowser.open(temp_html_path)
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to generate invoice: {str(e)}")
+
+    def number_to_words(self, number):
+        # Simple number to words for rupees (Indian style, up to lakhs/crores)
+        units = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"]
+        tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"]
+        if number == 0:
+            return "Zero"
+        if number < 20:
+            return units[number]
+        if number < 100:
+            return tens[number // 10] + (" " + units[number % 10] if (number % 10) != 0 else "")
+        if number < 1000:
+            return units[number // 100] + " Hundred" + (" and " + self.number_to_words(number % 100) if (number % 100) != 0 else "")
+        if number < 100000:
+            return self.number_to_words(number // 1000) + " Thousand" + (" " + self.number_to_words(number % 1000) if (number % 1000) != 0 else "")
+        if number < 10000000:
+            return self.number_to_words(number // 100000) + " Lakh" + (" " + self.number_to_words(number % 100000) if (number % 100000) != 0 else "")
+        return self.number_to_words(number // 10000000) + " Crore" + (" " + self.number_to_words(number % 10000000) if (number % 10000000) != 0 else "")
 
     def refresh_suggestions(self):
         self.suggestions = [p.name for p in self.db_manager.get_products()]
