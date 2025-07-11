@@ -4,6 +4,6 @@ python-Levenshtein
 pandas
 matplotlib
 pyqtgraph
-prophet
-pystan
-squarify 
+squarify
+numpy
+scikit-learn 

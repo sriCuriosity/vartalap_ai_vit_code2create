@@ -12,7 +12,7 @@ class StatementGeneratorWidget(QWidget):
         self.font = QFont("Arial", 12)
         self.db_path = os.path.join(os.path.dirname(__file__), '../../bills.db')
         self.db_manager = DBManager(os.path.abspath(self.db_path))
-        self.template_path = os.path.join(os.path.dirname(__file__), '../../templates/statement_template.html')
+        self.template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../business_management/templates/statement_template.html'))
         self.init_ui()
 
     def init_ui(self):
@@ -60,8 +60,8 @@ class StatementGeneratorWidget(QWidget):
         self.setLayout(layout)
 
     def generate_statement(self):
-        start_date = self.start_date_edit.date().toString("dd-MM-yyyy")
-        end_date = self.end_date_edit.date().toString("dd-MM-yyyy")
+        start_date = self.start_date_edit.date().toString("yyyy-MM-dd")
+        end_date = self.end_date_edit.date().toString("yyyy-MM-dd")
         customer_key = self.customer_combo.currentText()
         try:
             bills = self.db_manager.get_bills(start_date, end_date, customer_key if customer_key else None)
@@ -74,13 +74,14 @@ class StatementGeneratorWidget(QWidget):
             total_credit = 0.0
             for bill in bills:
                 particulars = "To Sales" if bill.transaction_type == "Debit" else f"By {bill.remarks}"
+                customer_name = CUSTOMERS.get(bill.customer_key, {}).get("name", bill.customer_key)
                 debit = f"₹{bill.total_amount:.2f}" if bill.transaction_type == "Debit" else ""
                 credit = f"₹{bill.total_amount:.2f}" if bill.transaction_type == "Credit" else ""
                 if bill.transaction_type == "Debit":
                     total_debit += bill.total_amount
                 else:
                     total_credit += bill.total_amount
-                item_rows += f"<tr><td>{bill.date}</td><td>{particulars}</td><td>{bill.transaction_type}</td><td>{bill.bill_number}</td><td>{debit}</td><td>{credit}</td></tr>"
+                item_rows += f"<tr><td>{bill.date}</td><td>{customer_name}</td><td>{particulars}</td><td>{bill.transaction_type}</td><td>{bill.bill_number}</td><td>{debit}</td><td>{credit}</td></tr>"
             closing_balance = total_debit - total_credit
             balance_type = "Debit" if closing_balance >= 0 else "Credit"
             closing_balance_display = f"Rs. {abs(closing_balance):.2f} {balance_type}"

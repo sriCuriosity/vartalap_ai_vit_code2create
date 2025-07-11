@@ -228,10 +228,21 @@ def forecast_total_sales(db: DBManager, start_date: str, end_date: str, periods:
     Returns a DataFrame with columns: ds (date), y (actual), yhat (forecast), yhat_lower, yhat_upper
     """
     import pandas as pd
+    import numpy as np
+    from datetime import datetime, timedelta
+    
+    # Try to import Prophet, fallback to simple forecasting if not available
     try:
         from prophet import Prophet
+        use_prophet = True
     except ImportError:
-        from fbprophet import Prophet
+        try:
+            from fbprophet import Prophet
+            use_prophet = True
+        except ImportError:
+            use_prophet = False
+            print("Warning: Prophet not available. Using simple forecasting method.")
+    
     bills = db.get_bills(start_date, end_date)
     data = [{'ds': b.date, 'y': b.total_amount} for b in bills]
     df = pd.DataFrame(data)
@@ -241,11 +252,37 @@ def forecast_total_sales(db: DBManager, start_date: str, end_date: str, periods:
     df = df.groupby('ds').sum().reset_index()
     if len(df.dropna()) < 2:
         return None
-    model = Prophet()
-    model.fit(df)
-    future = model.make_future_dataframe(periods=periods)
-    forecast = model.predict(future)
-    result = df.merge(forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']], on='ds', how='right')
+    
+    if use_prophet:
+        # Use Prophet for advanced forecasting
+        model = Prophet()
+        model.fit(df)
+        future = model.make_future_dataframe(periods=periods)
+        forecast = model.predict(future)
+        result = df.merge(forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']], on='ds', how='right')
+    else:
+        # Simple forecasting using moving average
+        df = df.sort_values('ds')
+        df['yhat'] = df['y'].rolling(window=7, min_periods=1).mean()
+        
+        # Generate future dates
+        last_date = df['ds'].max()
+        future_dates = [last_date + timedelta(days=i+1) for i in range(periods)]
+        
+        # Simple forecast based on recent average
+        recent_avg = df['y'].tail(7).mean()
+        future_df = pd.DataFrame({
+            'ds': future_dates,
+            'y': [np.nan] * periods,
+            'yhat': [recent_avg] * periods,
+            'yhat_lower': [recent_avg * 0.8] * periods,
+            'yhat_upper': [recent_avg * 1.2] * periods
+        })
+        
+        # Combine actual and forecast data
+        result = pd.concat([df, future_df], ignore_index=True)
+        result = result.sort_values('ds')
+    
     return result
 
 def predict_churned_customers(db: DBManager, start_date: str, end_date: str, recency_threshold: int = 60):

@@ -137,6 +137,8 @@ class BillGeneratorWidget(QWidget):
         self.update_transaction_fields()
         self.update_items_list()
         self.update_total()
+        # Ensure current date is set
+        self.date_entry.setText(datetime.datetime.now().strftime('%Y-%m-%d'))
 
     def add_item(self, item):
         if self.transaction_type_combo.currentText() == "Debit":
@@ -147,13 +149,13 @@ class BillGeneratorWidget(QWidget):
                     existing["total"] += item["total"]
                     self.update_items_list()
                     self.update_total()
-                    # Set focus to item name text area after adding
+                    # Set focus to quantity field after adding
                     self.item_entry_widget.item_name_combo.setFocus()
                     return
             self.items.append(item)
             self.update_items_list()
             self.update_total()
-            # Set focus to item name text area after adding
+            # Set focus to quantity field after adding
             self.item_entry_widget.item_name_combo.setFocus()
 
     def remove_item_by_index(self, index):
@@ -195,7 +197,8 @@ class BillGeneratorWidget(QWidget):
         self.update_items_list()
         self.item_entry_widget.clear_fields()
         self.total_display.setText("₹0.00")
-        self.date_entry.clear()
+        # Set current date instead of clearing
+        self.date_entry.setText(datetime.datetime.now().strftime('%Y-%m-%d'))
         self.customer_combo.setCurrentIndex(0)
         self.transaction_type_combo.setCurrentIndex(0)
         self.remarks_entry.clear()
@@ -279,7 +282,8 @@ class BillGeneratorWidget(QWidget):
                 subtotal=f"₹{subtotal:.2f}",
                 total=f"₹{total:.2f}",
                 amount_in_words=amount_in_words,
-                billing_year=self.get_billing_year()
+                billing_year=self.get_billing_year(),
+                billing_yearn=str(int(self.get_billing_year())+1)
             )
             temp_html_path = os.path.join(os.path.dirname(self.template_path), f"temp_invoice_{bill.bill_number}.html")
             with open(temp_html_path, "w", encoding="utf-8") as file:

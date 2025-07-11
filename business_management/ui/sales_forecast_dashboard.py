@@ -69,7 +69,19 @@ class SalesForecastDashboardWidget(QWidget):
             self.ax.plot(df['ds'], df['yhat'], label='Forecast', color='orange')
             # Uncertainty interval
             self.ax.fill_between(df['ds'], df['yhat_lower'], df['yhat_upper'], color='orange', alpha=0.2, label='Uncertainty')
-            self.ax.set_title('Sales Forecast (Prophet)')
+            
+            # Check if Prophet is available by looking at the forecast method used
+            try:
+                from prophet import Prophet
+                title = 'Sales Forecast (Prophet)'
+            except ImportError:
+                try:
+                    from fbprophet import Prophet
+                    title = 'Sales Forecast (Prophet)'
+                except ImportError:
+                    title = 'Sales Forecast (Simple Moving Average)'
+            
+            self.ax.set_title(title)
             self.ax.set_xlabel('Date')
             self.ax.set_ylabel('Revenue')
             self.ax.legend()

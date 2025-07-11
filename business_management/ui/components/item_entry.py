@@ -31,6 +31,15 @@ class ItemEntryWidget(QWidget):
         layout.addWidget(item_name_label)
         layout.addWidget(self.item_name_combo)
 
+        quantity_label = QLabel("Quantity:")
+        quantity_label.setFont(self.font)
+        self.quantity_entry = QSpinBox()
+        self.quantity_entry.setFont(self.font)
+        self.quantity_entry.setMinimum(1)
+        self.quantity_entry.setMaximum(10000)
+        layout.addWidget(quantity_label)
+        layout.addWidget(self.quantity_entry)
+
         # Price
         price_label = QLabel("Price:")
         price_label.setFont(self.font)
@@ -40,16 +49,6 @@ class ItemEntryWidget(QWidget):
         self.price_entry.setPrefix("₹")
         layout.addWidget(price_label)
         layout.addWidget(self.price_entry)
-
-        # Quantity
-        quantity_label = QLabel("Quantity:")
-        quantity_label.setFont(self.font)
-        self.quantity_entry = QSpinBox()
-        self.quantity_entry.setFont(self.font)
-        self.quantity_entry.setMinimum(1)
-        self.quantity_entry.setMaximum(10000)
-        layout.addWidget(quantity_label)
-        layout.addWidget(self.quantity_entry)
 
         # Add button
         self.add_button = QPushButton("Add Item")

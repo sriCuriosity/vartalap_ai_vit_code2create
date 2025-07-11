@@ -19,9 +19,25 @@
             background: #fff;
             padding: 0 10px 10px 10px;
         }}
+        .header-billinfo-block {{
+            border: 1px solid #000;
+            padding: 8px 8px 0 8px;
+            margin-bottom: 0px;
+            background: #fff;
+            border-bottom-width: 0cap ;
+        }}
+        .header-billinfo-flex {{
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }}
+        .header-billinfo-separator {{
+            border-bottom: 1px solid #000;
+            margin: 8px -8px 0 -8px;
+        }}
         .header {{
             text-align: left;
-            margin-bottom: 8px;
+            margin-bottom: 0;
         }}
         .header .store-name {{
             font-size: 14px;
@@ -33,10 +49,8 @@
             margin-bottom: 1px;
         }}
         .bill-info {{
-            margin-top: 8px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
+            width: auto;
+            text-align: right;
         }}
         .bill-info .left, .bill-info .right {{
             width: 48%;
@@ -55,31 +69,25 @@
             border-collapse: collapse;
             margin-top: 10px;
             margin-bottom: 0;
+            border: 1px solid #000;
         }}
         table.invoice-table th {{
-     border: 1px solid #000;
-    padding: 4px 6px;
-    font-size: 13px;
-    text-align: left;
-}}
-
-table.invoice-table tbody td {{
-    border-left: 1px solid #000;
-    border-right: 1px solid #000;
-    padding: 4px 6px;
-    font-size: 13px;
-    text-align: left;
-}}
-
-/* Add bottom border only to last row */
-table.invoice-table tbody tr:last-child td {{
-    border-bottom: 1px solid #000;
-}}
-
-        table.invoice-table th {{
+            border: 1px solid #000;
+            padding: 4px 6px;
             font-size: 13px;
+            text-align: left;
             font-weight: bold;
             text-transform: uppercase;
+        }}
+        table.invoice-table tbody td {{
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+            padding: 4px 6px;
+            font-size: 13px;
+            text-align: left;
+        }}
+        table.invoice-table tbody tr:last-child td {{
+            border-bottom: 1px solid #000;
         }}
         .totals {{
             margin-top: 10px;
@@ -90,32 +98,18 @@ table.invoice-table tbody tr:last-child td {{
         .totals-table {{
             border-collapse: collapse;
             width: 60%;
+            border: 1px solid #000;
+            margin-top: 2px;
         }}
-        table.invoice-table {{
-    border: 1px solid #000;
-    border-collapse: collapse;
-}}
-
-table.invoice-table thead th {{
-    border: 1px solid #000;
-}}
-
-table.invoice-table tbody td {{
-    border-left: 1px solid #000;
-    border-right: 1px solid #000;
-}}
-
-table.invoice-table tbody tr:last-child td {{
-    border-bottom: 1px solid #000;
-}}
-
-        .totals-table th {{
+        .totals-table th, .totals-table td {{
             text-align: left;
             font-weight: normal;
+            padding: 4px 6px;
+            border: 1px solid #000;
         }}
         .tax-exempted {{
-            margin-top: 12px;
-            font-size: 12px;
+            margin-top: 5px;
+            font-size: 10px;
         }}
         .amount-words {{
             margin-top: 8px;
@@ -139,24 +133,28 @@ table.invoice-table tbody tr:last-child td {{
 <body>
     <div style="border-width: 10px;border-color: black;">
     <div class="invoice-container">
-        <div class="header">
-            <div class="store-name">SADHASIVA AGENCIES</div>
-            <div class="address">4/53A, Bhairavi Nagar, Puliyankulam,</div>
-            <div class="address">Inamreddiyapatti, Virudhunagar-626003</div>
-            <div class="contact">Cell: 8825808813</div>
-            <!--<div class="gst">GST: 33DDGPD1231Z2</div>
-            <div class="pan">PAN NO.: AADFV4917E</div>-->
+        <div class="header-billinfo-block">
+            <div class="header-billinfo-flex">
+                <div class="header" style="margin-bottom: 0;">
+                    <div class="store-name">SADHASIVA AGENCIES</div>
+                    <div class="address">4/53A, Bhairavi Nagar, Puliyankulam,</div>
+                    <div class="address">Inamreddiyapatti, Virudhunagar-626003</div>
+                    <div class="contact">Cell: 8825808813</div>
+                </div>
+                <div>
+                    <div class="bill-info">
+                        <div style="font-weight:bold;">Billing Year: {billing_year} - {billing_yearn}</div>
+                        <div>Bill No.: <span style="font-weight:bold;">{bill_number}</span></div>
+                        <div>Date: {date}</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="bill-info">
-            <div class="left">
+        <div style="border-style:solid; margin-top: 0%;padding-top: 0%;border-width: thin;padding: 1%;">
+            <div>
                 <div>To, <span style="font-weight:bold;">{customer_name}</span></div>
                 <div>{customer_address}</div>
                 <div>GSTIN: {customer_gstin}</div>
-            </div>
-            <div class="right">
-                <div style="font-weight:bold;">Billing Year: {billing_year}</div>
-                <div>Bill No.: <span style="font-weight:bold;">{bill_number}</span></div>
-                <div>Date: {date}</div>
             </div>
         </div>
         <table class="invoice-table">
@@ -174,23 +172,18 @@ table.invoice-table tbody tr:last-child td {{
             {item_rows}
             </tbody>
         </table>
-        <div class="totals">
+        <div class="tax-exempted">
+            *TAX EXEMPTED<br>
+        </div>
+        <div class="totals" style="margin-top: 0cap;">
             <table class="totals-table">
-                <!--<tr>
-                    <th>Sub Total</th>
-                    <td>{subtotal}</td>
-                </tr>-->
                 <tr>
                     <th>TOTAL</th>
                     <td>{total}</td>
                 </tr>
             </table>
         </div>
-        <!--<div class="tax-exempted">
-            TAX EXEMPTED<br>
-            TMB A/c No.093539842996687<br>
-            IFS Code : TMBL0000939-->
-        </div>
+
         <div class="amount-words">
             Rupees : <span>{amount_in_words}</span> Only
         </div>
@@ -203,7 +196,6 @@ table.invoice-table tbody tr:last-child td {{
                 Authorized Signatory
             </div>
         </div>
-    </div>
     </div>
 </body>
 </html>

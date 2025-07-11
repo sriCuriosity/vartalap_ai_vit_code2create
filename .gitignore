@@ -1,2 +1,64 @@
+# Node modules
 node_modules/
+
+# Environment variables
 .env
+
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Database files
+*.db
+*.sqlite3
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# VSCode settings folder
+.vscode/
+
+# Logs and reports
+*.log
+*.out
+*.err
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Backup and swap files
+*.bak
+*.swp
+*.tmp
+
+# Experiment folders (optional, if you want to ignore)
+Exp1/
+
+# Icon files (usually tracked, but if you want to ignore)
+# *.ico

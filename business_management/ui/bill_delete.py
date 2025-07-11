@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QPushButton, QMessageBox, QTextEdit
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QPushButton, QMessageBox, QTextEdit, QTableWidget, QTableWidgetItem, QHeaderView
 from business_management.database.db_manager import DBManager
 import os
 
@@ -26,9 +26,22 @@ class BillDeleteWidget(QWidget):
         bill_select_layout.addWidget(self.bill_combo)
         layout.addLayout(bill_select_layout)
 
+        # Add a horizontal layout to hold details text and items table side by side
+        details_items_layout = QHBoxLayout()
+
         self.details_text = QTextEdit()
         self.details_text.setReadOnly(True)
-        layout.addWidget(self.details_text)
+        self.details_text.setMinimumWidth(300)
+        details_items_layout.addWidget(self.details_text)
+
+        self.items_table = QTableWidget()
+        self.items_table.setColumnCount(5)
+        self.items_table.setHorizontalHeaderLabels(["Item Name", "Quantity", "Price", "Total", "Remarks"])
+        self.items_table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.items_table.setEditTriggers(QTableWidget.NoEditTriggers)
+        details_items_layout.addWidget(self.items_table)
+
+        layout.addLayout(details_items_layout)
 
         self.delete_button = QPushButton("Delete Bill")
         self.delete_button.clicked.connect(self.delete_bill)
@@ -48,11 +61,13 @@ class BillDeleteWidget(QWidget):
             self.display_bill_details()
         else:
             self.details_text.setText("")
+            self.items_table.setRowCount(0)
 
     def display_bill_details(self):
         bill_number = self.bill_combo.currentText()
         if not bill_number:
             self.details_text.setText("")
+            self.items_table.setRowCount(0)
             return
         bill = self.db_manager.get_bill(int(bill_number))
         if bill:
@@ -61,18 +76,23 @@ class BillDeleteWidget(QWidget):
             details += f"Date: {bill.date}\n"
             details += f"Total Amount: ${bill.total_amount:.2f}\n"
             details += f"Transaction Type: {bill.transaction_type}\n"
-            details += f"Remarks: {bill.remarks if bill.remarks else 'None'}\n\n"
-            details += "Items:\n"
-            for idx, item in enumerate(bill.items, start=1):
-                details += f"  {idx}. \t"
-                for key, value in item.items():
-                    details += f"     {key}: {value}\t"
-                details += "\t"
+            details += f"Remarks: {bill.remarks if bill.remarks else 'None'}\n"
             self.details_text.setText(details)
+
+            self.items_table.setRowCount(0)
+            for row, item in enumerate(bill.items):
+                self.items_table.insertRow(row)
+                self.items_table.setItem(row, 0, QTableWidgetItem(str(item.get('name', ''))))
+                self.items_table.setItem(row, 1, QTableWidgetItem(str(item.get('quantity', ''))))
+                self.items_table.setItem(row, 2, QTableWidgetItem(str(item.get('price', ''))))
+                self.items_table.setItem(row, 3, QTableWidgetItem(str(item.get('total', ''))))
+                self.items_table.setItem(row, 4, QTableWidgetItem(str(item.get('remarks', ''))))
         else:
             self.details_text.setText("Bill not found.")
+            self.items_table.setRowCount(0)
 
     def delete_bill(self):
+        import os
         bill_number = self.bill_combo.currentText()
         if not bill_number:
             return
@@ -80,7 +100,15 @@ class BillDeleteWidget(QWidget):
         if confirm == QMessageBox.Yes:
             success = self.db_manager.delete_bill(int(bill_number))
             if success:
-                QMessageBox.information(self, "Deleted", f"Bill {bill_number} deleted successfully.")
+                # Delete the generated invoice file if it exists
+                template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../business_management/templates'))
+                invoice_file = os.path.join(template_dir, f"temp_invoice_{bill_number}.html")
+                if os.path.exists(invoice_file):
+                    try:
+                        os.remove(invoice_file)
+                    except Exception as e:
+                        QMessageBox.warning(self, "Warning", f"Failed to delete invoice file: {str(e)}")
+                QMessageBox.information(self, "Deleted", f"Bill {bill_number} and associated invoice deleted successfully.")
                 self.refresh_bill_numbers()
             else:
                 QMessageBox.warning(self, "Error", f"Failed to delete bill {bill_number}.") 
