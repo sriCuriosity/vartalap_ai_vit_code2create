@@ -1,9 +1,8 @@
 PyQt5
-fuzzywuzzy
-python-Levenshtein
 pandas
-matplotlib
-pyqtgraph
-squarify
 numpy
-scikit-learn 
+matplotlib
+prophet
+fuzzywuzzy
+squarify
+pyinstaller 
