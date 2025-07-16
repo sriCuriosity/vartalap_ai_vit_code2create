@@ -1,5 +1,7 @@
 from typing import Dict, Any
 from business_management.database.db_manager import DBManager
+import os
+import sys
 
 def get_expense_summary(db: DBManager, start_date: str, end_date: str) -> Dict[str, Any]:
     expenses = db.get_expenses(start_date, end_date)
@@ -338,3 +340,10 @@ def detect_expense_anomalies(db: DBManager, start_date: str, end_date: str):
     std = daily['amount'].std()
     anomalies = daily[(daily['amount'] > mean + 2*std) | (daily['amount'] < mean - 2*std)]
     return anomalies.to_dict('records')
+
+def get_app_path():
+    """Return the base directory for data files, compatible with script and PyInstaller EXE."""
+    if getattr(sys, 'frozen', False):
+        # Running as EXE
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.abspath(__file__))

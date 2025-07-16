@@ -2,13 +2,13 @@ import sys
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QAbstractItemView, QHeaderView, QPushButton, QDateEdit
 from PyQt5.QtCore import Qt, QDate
 from business_management.database.db_manager import DBManager
-from business_management.utils.helpers import get_best_worst_selling_products, get_product_sales_trends
+from business_management.utils.helpers import get_best_worst_selling_products, get_product_sales_trends, get_app_path
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bills.db')
+DB_PATH = os.path.join(get_app_path(), 'bills.db')
 
 class ProductAnalysisDashboardWidget(QWidget):
     def __init__(self, parent=None):

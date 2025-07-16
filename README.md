@@ -69,6 +69,20 @@ The project follows a modular structure:
 - `database/`: Database operations
 - `utils/`: Utility functions and constants
 
+## Building the Windows Executable
+
+To build a standalone Windows EXE:
+
+1. Make sure you have Python and pip installed.
+2. Open a command prompt in the project directory.
+3. Run:
+   ```
+   build_exe.bat
+   ```
+4. The EXE will be created in the `dist` folder as `BusinessManagement.exe`.
+
+The EXE will work on any Windows machine and will correctly handle all data files (database, templates, etc.).
+
 ## License
 
 This project is licensed under the MIT License. 

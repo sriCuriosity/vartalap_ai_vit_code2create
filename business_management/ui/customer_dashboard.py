@@ -7,8 +7,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from business_management.utils.customer_profitability import compute_customer_profitability
+from business_management.utils.helpers import get_app_path
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bills.db')
+DB_PATH = os.path.join(get_app_path(), 'bills.db')
 
 class CustomerDashboardWidget(QWidget):
     def __init__(self, parent=None):

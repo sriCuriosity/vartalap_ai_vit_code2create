@@ -4,14 +4,14 @@ from PyQt5.QtCore import Qt, QDate
 from business_management.database.db_manager import DBManager
 from business_management.utils.helpers import (
     get_top_products_by_revenue, get_sales_by_day_of_week, get_sales_by_month,
-    get_sales_heatmap_data, get_revenue_by_customer_segment
+    get_sales_heatmap_data, get_revenue_by_customer_segment, get_app_path
 )
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bills.db')
+DB_PATH = os.path.join(get_app_path(), 'bills.db')
 
 class BusinessOverviewDashboardWidget(QWidget):
     def __init__(self, parent=None):

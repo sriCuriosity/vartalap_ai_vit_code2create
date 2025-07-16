@@ -21,7 +21,7 @@ if exist "dist" rmdir /s /q "dist"
 
 REM Build the executable
 echo Building executable...
-pyinstaller main.spec --clean
+python -m PyInstaller main.spec --clean
 
 REM Check if build was successful
 if exist "dist\BusinessManagement.exe" (

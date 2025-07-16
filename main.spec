@@ -1,34 +1,35 @@
 # -*- mode: python ; coding: utf-8 -*-
+from PyInstaller.utils.hooks import collect_data_files, collect_submodules
+
+datas = [
+    ('business_management', 'business_management'),
+    ('Bill Number.txt', '.'),
+    ('bills.db', '.'),
+    ('icon.ico', '.'),
+]
+datas += collect_data_files('prophet')
+
+hiddenimports = collect_submodules('prophet') + [
+    'PyQt5.QtCore',
+    'PyQt5.QtGui',
+    'PyQt5.QtWidgets',
+    'pandas',
+    'numpy',
+    'matplotlib',
+    'fbprophet',
+    'fuzzywuzzy',
+    'fuzzywuzzy.process',
+    'fuzzywuzzy.fuzz',
+    'squarify',
+    'sqlite3'
+]
 
 a = Analysis(
     ['business_management/main.py'],
     pathex=[],
     binaries=[],
-    datas=[
-        ('business_management', 'business_management'), 
-        ('Bill Number.txt', '.'),
-        ('bills.db', '.'),
-        ('icon.ico', '.'),
-        # Add all .py files from prophet
-        ('C:/Users/Admin/AppData/Local/Programs/Python/Python313/Lib/site-packages/prophet', 'prophet'),
-        # Add matplotlib data (fonts, etc.)
-        ('C:/Users/Admin/AppData/Local/Programs/Python/Python313/Lib/site-packages/matplotlib/mpl-data', 'mpl-data'),
-    ],
-    hiddenimports=[
-        'PyQt5.QtCore',
-        'PyQt5.QtGui', 
-        'PyQt5.QtWidgets',
-        'pandas',
-        'numpy',
-        'matplotlib',
-        'prophet',
-        'fbprophet',
-        'fuzzywuzzy',
-        'fuzzywuzzy.process',
-        'fuzzywuzzy.fuzz',
-        'squarify',
-        'sqlite3'
-    ],
+    datas=datas,
+    hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],

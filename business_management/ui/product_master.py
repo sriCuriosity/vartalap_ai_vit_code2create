@@ -6,8 +6,9 @@ from business_management.database.db_manager import DBManager
 from business_management.models.product import Product
 import os
 from business_management.resources.suggestions import INITIAL_PRODUCTS
+from business_management.utils.helpers import get_app_path
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bills.db')
+DB_PATH = os.path.join(get_app_path(), 'bills.db')
 
 def ensure_initial_products(db_manager):
     existing = set(db_manager.get_products())

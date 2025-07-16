@@ -7,6 +7,8 @@ from business_management.models.product import Product
 class DBManager:
     def __init__(self, db_path: str):
         self.db_path = db_path
+        # Ensure parent directory exists
+        os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
         self._initialize_database()
 
     def _initialize_database(self):

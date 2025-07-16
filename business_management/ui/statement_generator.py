@@ -5,14 +5,15 @@ from business_management.resources.customers import CUSTOMERS
 from business_management.database.db_manager import DBManager
 import os
 import webbrowser
+from business_management.utils.helpers import get_app_path
 
 class StatementGeneratorWidget(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.font = QFont("Arial", 12)
-        self.db_path = os.path.join(os.path.dirname(__file__), '../../bills.db')
-        self.db_manager = DBManager(os.path.abspath(self.db_path))
-        self.template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../business_management/templates/statement_template.html'))
+        self.db_path = os.path.join(get_app_path(), 'bills.db')
+        self.db_manager = DBManager(self.db_path)
+        self.template_path = os.path.join(get_app_path(), 'business_management', 'templates', 'statement_template.html')
         self.init_ui()
 
     def init_ui(self):

@@ -4,12 +4,12 @@ from PyQt5.QtCore import Qt, QDate
 from business_management.database.db_manager import DBManager
 from business_management.utils.helpers import (
     predict_churned_customers, recommend_products_for_customer,
-    detect_sales_anomalies, detect_expense_anomalies
+    detect_sales_anomalies, detect_expense_anomalies, get_app_path
 )
 import os
 import pandas as pd
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bills.db')
+DB_PATH = os.path.join(get_app_path(), 'bills.db')
 
 class AdvancedAnalyticsDashboardWidget(QWidget):
     def __init__(self, parent=None):

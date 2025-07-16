@@ -1,8 +1,9 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QPushButton, QMessageBox, QTextEdit, QTableWidget, QTableWidgetItem, QHeaderView
 from business_management.database.db_manager import DBManager
 import os
+from business_management.utils.helpers import get_app_path
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bills.db')
+DB_PATH = os.path.join(get_app_path(), 'bills.db')
 
 class BillDeleteWidget(QWidget):
     def __init__(self):

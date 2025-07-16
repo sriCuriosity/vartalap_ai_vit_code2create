@@ -14,8 +14,9 @@ try:
 except ImportError:
     PROPHET_AVAILABLE = False
 import datetime
+from business_management.utils.helpers import get_app_path
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bills.db')
+DB_PATH = os.path.join(get_app_path(), 'bills.db')
 
 class InventoryDashboardWidget(QWidget):
     def __init__(self, parent=None):

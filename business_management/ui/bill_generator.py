@@ -13,8 +13,9 @@ import os
 import json
 import webbrowser
 import datetime
+from business_management.utils.helpers import get_app_path
 
-DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'bills.db')
+DB_PATH = os.path.join(get_app_path(), 'bills.db')
 
 class BillGeneratorWidget(QWidget):
     def __init__(self, parent=None):
@@ -22,8 +23,8 @@ class BillGeneratorWidget(QWidget):
         self.font1 = QFont("Arial", 12)
         self.items = []
         self.db_manager = DBManager(DB_PATH)
-        self.bill_number_path = os.path.join(os.path.dirname(__file__), '../../Bill Number.txt')
-        self.template_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../business_management/templates/invoice_vr_template.html'))
+        self.bill_number_path = os.path.join(get_app_path(), 'Bill Number.txt')
+        self.template_path = os.path.join(get_app_path(), 'business_management', 'templates', 'invoice_vr_template.html')
         self.bill_number = self.get_current_bill_number()
         self.suggestions = self.db_manager.get_products()
         self.init_ui()
