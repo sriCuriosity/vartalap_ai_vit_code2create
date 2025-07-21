@@ -1,2 +1,7 @@
 node_modules/
 .env
+dist/
+build/
+dist/BusinessManagement.exe
+build/main/BusinessManagement.pkg
+build/main/PYZ-00.pyz
