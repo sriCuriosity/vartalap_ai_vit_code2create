@@ -33,10 +33,12 @@ class ItemEntryWidget(QWidget):
 
         quantity_label = QLabel("Quantity:")
         quantity_label.setFont(self.font)
-        self.quantity_entry = QSpinBox()
+        self.quantity_entry = QDoubleSpinBox()
         self.quantity_entry.setFont(self.font)
-        self.quantity_entry.setMinimum(1)
-        self.quantity_entry.setMaximum(10000)
+        self.quantity_entry.setMinimum(0.01)
+        self.quantity_entry.setMaximum(1000000.0)
+        self.quantity_entry.setDecimals(3)
+        self.quantity_entry.setSingleStep(1.0)
         layout.addWidget(quantity_label)
         layout.addWidget(self.quantity_entry)
 
@@ -83,7 +85,7 @@ class ItemEntryWidget(QWidget):
         self.item_name_combo.setCurrentIndex(0)
         self.item_name_combo.setEditText("")
         self.price_entry.setValue(0.0)
-        self.quantity_entry.setValue(1)
+        self.quantity_entry.setValue(0.0)
 
     def set_suggestions(self, suggestions):
         self.item_name_combo.clear()

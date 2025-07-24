@@ -252,10 +252,12 @@ class BillGenerator(QWidget):
 
         quantity_label = QLabel("Quantity:")
         quantity_label.setFont(self.font)
-        self.quantity_entry = QSpinBox()
+        self.quantity_entry = QDoubleSpinBox()
         self.quantity_entry.setFont(self.font)
-        self.quantity_entry.setMinimum(1)
-        self.quantity_entry.setMaximum(10000)
+        self.quantity_entry.setMinimum(0.01)
+        self.quantity_entry.setMaximum(10000.0)
+        self.quantity_entry.setDecimals(2)
+        self.quantity_entry.setSingleStep(0.01)
         self.item_layout.addWidget(quantity_label)
         self.item_layout.addWidget(self.quantity_entry)
 
@@ -491,7 +493,7 @@ class BillGenerator(QWidget):
             if item.get("type") == "Credit":
                 label = QLabel(f"Credit: ₹{item['total']:.2f} - Remarks: {item['remarks']}")
             else:
-                label = QLabel(f"{item['name']} - ₹{item['price']:.2f} x {item['quantity']} = ₹{item['total']:.2f}")
+                label = QLabel(f"{item['name']} - ₹{item['price']:.2f} x {item['quantity']:.2f} = ₹{item['total']:.2f}")
             label.setFont(self.font)
             remove_btn = QPushButton("✖")
             remove_btn.setFixedSize(24, 24)
@@ -515,7 +517,7 @@ class BillGenerator(QWidget):
         self.item_name_combo.setCurrentIndex(0)
         self.item_name_combo.setEditText("")
         self.price_entry.setValue(0.0)
-        self.quantity_entry.setValue(1)
+        self.quantity_entry.setValue(0.0)
 
     def calculate_total(self):
         total = sum(item["total"] for item in self.items)
@@ -529,7 +531,7 @@ class BillGenerator(QWidget):
             item_rows += f"""<tr>
             <td>{index + 1}</td>
             <td>{item['name']}</td>
-            <td>{item['quantity']}</td>
+            <td>{item['quantity']:.2f}</td>
             <td>₹{item['price']:.2f}</td>
             <td colspan="2">₹{item['total']:.2f}</td>
             </tr>"""
