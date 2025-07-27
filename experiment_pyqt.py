@@ -279,10 +279,8 @@ class BillGenerator(QWidget):
         quantity_label.setFont(self.font)
         self.quantity_entry = QDoubleSpinBox()
         self.quantity_entry.setFont(self.font)
-        self.quantity_entry.setMinimum(0.01)
+        self.quantity_entry.setMinimum(1)
         self.quantity_entry.setMaximum(10000)
-        self.quantity_entry.setDecimals(2)
-        self.quantity_entry.setValue(1.0)
         self.item_layout.addWidget(quantity_label)
         self.item_layout.addWidget(self.quantity_entry)
 
@@ -568,7 +566,7 @@ class BillGenerator(QWidget):
         self.item_name_combo.setCurrentIndex(0)
         self.item_name_combo.setEditText("")
         self.price_entry.setValue(0.0)
-        self.quantity_entry.setValue(1.0)
+        self.quantity_entry.setValue(1)
 
     def calculate_total(self):
         total = sum(item["total"] for item in self.items)
