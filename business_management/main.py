@@ -1,7 +1,5 @@
 import sys
-from PyQt5.QtWidgets import (QApplication, QStackedWidget, QWidget, QVBoxLayout, 
-                            QHBoxLayout, QPushButton, QScrollArea, QSizePolicy)
-from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QApplication, QStackedWidget, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QDesktopWidget
 from business_management.ui.bill_generator import BillGeneratorWidget
 from business_management.ui.statement_generator import StatementGeneratorWidget
 from business_management.ui.product_master import ProductMasterWidget
@@ -19,87 +17,36 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Business Management Software")
-        
-        # Get the available screen geometry
-        screen = QApplication.primaryScreen().availableGeometry()
-        window_width = min(1200, screen.width() * 0.9)  # 90% of screen width, max 1200px
-        window_height = min(800, screen.height() * 0.9)  # 90% of screen height, max 800px
-        
-        # Set window size and position it in the center
-        self.resize(int(window_width), int(window_height))
-        self.move(
-            int((screen.width() - window_width) / 2),
-            int((screen.height() - window_height) / 2)
-        )
-        
-        # Make the window resizable with a minimum size
-        self.setMinimumSize(800, 600)
-        
-        # Create the main layout
-        main_layout = QVBoxLayout(self)  # Set layout directly on self
-        main_layout.setContentsMargins(10, 10, 10, 10)
-        main_layout.setSpacing(10)
-        
-        # Create navigation bar
-        nav_widget = QWidget()
-        nav_layout = QHBoxLayout(nav_widget)
-        nav_layout.setAlignment(Qt.AlignLeft)
-        nav_layout.setSpacing(5)
-        nav_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        
-        # Create the stacked widget first
-        self.stacked_widget = QStackedWidget()
-        
-        # Create a container widget for the stacked widget
-        container = QWidget()
-        container_layout = QVBoxLayout(container)
-        container_layout.setContentsMargins(0, 0, 0, 0)
-        container_layout.addWidget(self.stacked_widget)
-        
-        # Create scroll area and set its properties
-        scroll_area = QScrollArea()
-        scroll_area.setWidgetResizable(True)
-        scroll_area.setWidget(container)
-        
-        # Add navigation and content to main layout
-        main_layout.addWidget(nav_widget)
-        main_layout.addWidget(scroll_area, 1)  # Add stretch factor to make it take available space
-        
-        # Set size policy for the scroll area to expand
-        scroll_area.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        
-        # Create and add navigation buttons
+        self.resize(900, 700)
+        self.center_window()
+        layout = QVBoxLayout()
+        nav_layout = QHBoxLayout()
         self.btn_bill = QPushButton("Bill Generator")
-        self.btn_statement = QPushButton("Statement")
-        self.btn_product = QPushButton("Products")
+        self.btn_statement = QPushButton("Statement Generator")
+        self.btn_product = QPushButton("Product Master")
         self.btn_delete = QPushButton("Delete Bill")
-        self.btn_inventory = QPushButton("Inventory")
-        self.btn_customer = QPushButton("Customers")
-        self.btn_expense = QPushButton("Expenses")
+        self.btn_inventory = QPushButton("Inventory Intelligence")
+        self.btn_customer = QPushButton("Customer Profitability")
+        self.btn_expense = QPushButton("Expense & Profit/Loss")
         self.btn_product_analysis = QPushButton("Product Analysis")
-        self.btn_customer_behavior = QPushButton("Customer Analysis")
-        self.btn_business_overview = QPushButton("Overview")
-        self.btn_sales_forecast = QPushButton("Forecast")
-        self.btn_advanced_analytics = QPushButton("Analytics")
-        
-        # Add buttons to navigation layout
-        nav_buttons = [
-            self.btn_bill, self.btn_statement, self.btn_product, 
-            self.btn_delete, self.btn_inventory, self.btn_customer,
-            self.btn_expense, self.btn_product_analysis, self.btn_customer_behavior,
-            self.btn_business_overview, self.btn_sales_forecast, self.btn_advanced_analytics
-        ]
-        
-        # Configure buttons and add to layout
-        for btn in nav_buttons:
-            btn.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Fixed)
-            btn.setMinimumWidth(100)  # Set a minimum width for better appearance
-            nav_layout.addWidget(btn)
-        
-        # Add stretch to push buttons to the left
-        nav_layout.addStretch()
-        
-        # Create all the widgets
+        self.btn_customer_behavior = QPushButton("Customer Behavior")
+        self.btn_business_overview = QPushButton("Business Overview")
+        self.btn_sales_forecast = QPushButton("Sales Forecast")
+        self.btn_advanced_analytics = QPushButton("Advanced Analytics")
+        nav_layout.addWidget(self.btn_bill)
+        nav_layout.addWidget(self.btn_statement)
+        nav_layout.addWidget(self.btn_product)
+        nav_layout.addWidget(self.btn_delete)
+        nav_layout.addWidget(self.btn_inventory)
+        nav_layout.addWidget(self.btn_customer)
+        nav_layout.addWidget(self.btn_expense)
+        nav_layout.addWidget(self.btn_product_analysis)
+        nav_layout.addWidget(self.btn_customer_behavior)
+        nav_layout.addWidget(self.btn_business_overview)
+        nav_layout.addWidget(self.btn_sales_forecast)
+        nav_layout.addWidget(self.btn_advanced_analytics)
+        layout.addLayout(nav_layout)
+        self.stacked_widget = QStackedWidget()
         self.bill_gen = BillGeneratorWidget()
         self.statement_gen = StatementGeneratorWidget()
         self.product_master = ProductMasterWidget()
@@ -112,8 +59,6 @@ class MainWindow(QWidget):
         self.business_overview_dashboard = BusinessOverviewDashboardWidget()
         self.sales_forecast_dashboard = SalesForecastDashboardWidget()
         self.advanced_analytics_dashboard = AdvancedAnalyticsDashboardWidget()
-        
-        # Add all widgets to the stacked widget
         self.stacked_widget.addWidget(self.bill_gen)
         self.stacked_widget.addWidget(self.statement_gen)
         self.stacked_widget.addWidget(self.product_master)
@@ -126,10 +71,8 @@ class MainWindow(QWidget):
         self.stacked_widget.addWidget(self.business_overview_dashboard)
         self.stacked_widget.addWidget(self.sales_forecast_dashboard)
         self.stacked_widget.addWidget(self.advanced_analytics_dashboard)
-        
-        # Set the first widget as default
-        self.stacked_widget.setCurrentWidget(self.bill_gen)
-        
+        layout.addWidget(self.stacked_widget)
+        self.setLayout(layout)
         self.btn_bill.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.bill_gen))
         self.btn_statement.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.statement_gen))
         self.btn_product.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.product_master))
@@ -144,27 +87,14 @@ class MainWindow(QWidget):
         self.btn_advanced_analytics.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.advanced_analytics_dashboard))
 
     def center_window(self):
-        """Center the window on the screen with adaptive sizing"""
+        """Center the window on the screen"""
         desktop = QDesktopWidget()
         screen_geometry = desktop.screenGeometry()
         window_geometry = self.geometry()
         
-        # Ensure window doesn't exceed screen size
-        max_width = min(1200, screen_geometry.width() - 100)
-        max_height = min(800, screen_geometry.height() - 100)
-        
-        # Resize if window is too large for screen
-        if window_geometry.width() > max_width or window_geometry.height() > max_height:
-            self.resize(max_width, max_height)
-            window_geometry = self.geometry()
-        
         # Calculate center position
         x = (screen_geometry.width() - window_geometry.width()) // 2
         y = (screen_geometry.height() - window_geometry.height()) // 2
-        
-        # Ensure window doesn't go off-screen
-        x = max(0, min(x, screen_geometry.width() - window_geometry.width()))
-        y = max(0, min(y, screen_geometry.height() - window_geometry.height()))
         
         # Move window to center
         self.move(x, y)

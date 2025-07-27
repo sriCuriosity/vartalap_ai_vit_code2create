@@ -53,38 +53,16 @@ class BillGeneratorWidget(QWidget):
         customer_layout.addWidget(self.customer_combo)
         main_layout.addLayout(customer_layout)
 
-        # Date and Bill Number entry
-        date_bill_layout = QHBoxLayout()
-        
-        # Date entry (smaller)
+        # Date entry
+        date_layout = QHBoxLayout()
         date_label = QLabel("Date:")
         date_label.setFont(self.font1)
         self.date_entry = QLineEdit()
         self.date_entry.setFont(self.font1)
         self.date_entry.setText(datetime.datetime.now().strftime('%Y-%m-%d'))
-        self.date_entry.setFixedWidth(120)  # Make date entry smaller
-        date_bill_layout.addWidget(date_label)
-        date_bill_layout.addWidget(self.date_entry)
-        
-        # Add some spacing
-        date_bill_layout.addSpacing(20)
-        
-        # Bill Number entry (larger)
-        bill_number_label = QLabel("Bill Number:")
-        bill_number_label.setFont(self.font1)
-        self.bill_number_entry = QSpinBox()
-        self.bill_number_entry.setFont(self.font1)
-        self.bill_number_entry.setMinimum(1)
-        self.bill_number_entry.setMaximum(999999)
-        self.bill_number_entry.setValue(self.bill_number)
-        self.bill_number_entry.setFixedWidth(150)  # Make bill number entry larger
-        date_bill_layout.addWidget(bill_number_label)
-        date_bill_layout.addWidget(self.bill_number_entry)
-        
-        # Add stretch to push fields to the left
-        date_bill_layout.addStretch()
-        
-        main_layout.addLayout(date_bill_layout)
+        date_layout.addWidget(date_label)
+        date_layout.addWidget(self.date_entry)
+        main_layout.addLayout(date_layout)
 
         # Transaction type
         transaction_type_layout = QHBoxLayout()
@@ -222,8 +200,6 @@ class BillGeneratorWidget(QWidget):
         self.total_display.setText("₹0.00")
         # Set current date instead of clearing
         self.date_entry.setText(datetime.datetime.now().strftime('%Y-%m-%d'))
-        # Reset bill number to current bill number
-        self.bill_number_entry.setValue(self.bill_number)
         self.customer_combo.setCurrentIndex(0)
         self.transaction_type_combo.setCurrentIndex(0)
         self.remarks_entry.clear()
@@ -256,11 +232,8 @@ class BillGeneratorWidget(QWidget):
                     "remarks": remarks
                 }]
                 total_amount = self.credit_amount_entry.value()
-            # Get bill number from input field
-            bill_number = self.bill_number_entry.value()
-            
             bill = Bill(
-                bill_number=bill_number,
+                bill_number=self.bill_number,
                 customer_key=customer_key,
                 date=date,
                 items=items,
@@ -270,12 +243,7 @@ class BillGeneratorWidget(QWidget):
             )
             # Save to DB
             self.db_manager.save_bill(bill)
-            # Update the stored bill number to the next number after the current one
-            self.bill_number = bill_number + 1
-            with open(self.bill_number_path, "w") as file:
-                file.write(str(self.bill_number))
-            # Update the bill number field to show the next number
-            self.bill_number_entry.setValue(self.bill_number)
+            self.update_bill_number()
             # Generate HTML invoice for Debit
             if transaction_type == "Debit":
                 self.generate_html_invoice(bill)
