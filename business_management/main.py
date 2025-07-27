@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QStackedWidget, QWidget, QVBoxLayout, QHBoxLayout, QPushButton
+from PyQt5.QtWidgets import QApplication, QStackedWidget, QWidget, QVBoxLayout, QHBoxLayout, QPushButton, QDesktopWidget
 from business_management.ui.bill_generator import BillGeneratorWidget
 from business_management.ui.statement_generator import StatementGeneratorWidget
 from business_management.ui.product_master import ProductMasterWidget
@@ -17,7 +17,9 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Business Management Software")
-        self.resize(900, 700)
+        # Set a more reasonable default size that works on most screens
+        self.resize(1200, 800)
+        self.center_window()
         layout = QVBoxLayout()
         nav_layout = QHBoxLayout()
         self.btn_bill = QPushButton("Bill Generator")
@@ -84,6 +86,32 @@ class MainWindow(QWidget):
         self.btn_business_overview.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.business_overview_dashboard))
         self.btn_sales_forecast.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.sales_forecast_dashboard))
         self.btn_advanced_analytics.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.advanced_analytics_dashboard))
+
+    def center_window(self):
+        """Center the window on the screen with adaptive sizing"""
+        desktop = QDesktopWidget()
+        screen_geometry = desktop.screenGeometry()
+        window_geometry = self.geometry()
+        
+        # Ensure window doesn't exceed screen size
+        max_width = min(1200, screen_geometry.width() - 100)
+        max_height = min(800, screen_geometry.height() - 100)
+        
+        # Resize if window is too large for screen
+        if window_geometry.width() > max_width or window_geometry.height() > max_height:
+            self.resize(max_width, max_height)
+            window_geometry = self.geometry()
+        
+        # Calculate center position
+        x = (screen_geometry.width() - window_geometry.width()) // 2
+        y = (screen_geometry.height() - window_geometry.height()) // 2
+        
+        # Ensure window doesn't go off-screen
+        x = max(0, min(x, screen_geometry.width() - window_geometry.width()))
+        y = max(0, min(y, screen_geometry.height() - window_geometry.height()))
+        
+        # Move window to center
+        self.move(x, y)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox,
     QLineEdit, QPushButton, QListWidget, QMessageBox, QSpinBox, QDoubleSpinBox, QMenu,
-    QListWidgetItem, QCompleter, QStyledItemDelegate, QWidget as QtWidget
+    QListWidgetItem, QCompleter, QStyledItemDelegate, QWidget as QtWidget, QDesktopWidget
 )
 from PyQt5.QtCore import Qt, QSortFilterProxyModel, QStringListModel, QDate
 from PyQt5.QtGui import QFont
@@ -112,7 +112,9 @@ class BillGenerator(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Bill Generator - PyQt5")
-        self.setGeometry(100, 100, 900, 700)
+        # Set a more reasonable default size that works on most screens
+        self.resize(1200, 800)
+        self.center_window()
         self.font = QFont("Arial", 12)
         self.items = []
         self._initialize_database() # Ensure database and table exist
@@ -172,14 +174,37 @@ class BillGenerator(QWidget):
         customer_layout.addWidget(self.customer_combo)
         bill_layout.addLayout(customer_layout)
 
-        date_layout = QHBoxLayout()
+        # Date and Bill Number entry
+        date_bill_layout = QHBoxLayout()
+        
+        # Date entry (smaller)
         date_label = QLabel("Date:")
         date_label.setFont(self.font)
         self.date_entry = QLineEdit(datetime.now().strftime("%d-%m-%Y"))
         self.date_entry.setFont(self.font)
-        date_layout.addWidget(date_label)
-        date_layout.addWidget(self.date_entry)
-        bill_layout.addLayout(date_layout)
+        self.date_entry.setFixedWidth(120)  # Make date entry smaller
+        date_bill_layout.addWidget(date_label)
+        date_bill_layout.addWidget(self.date_entry)
+        
+        # Add some spacing
+        date_bill_layout.addSpacing(20)
+        
+        # Bill Number entry (larger)
+        bill_number_label = QLabel("Bill Number:")
+        bill_number_label.setFont(self.font)
+        self.bill_number_entry = QSpinBox()
+        self.bill_number_entry.setFont(self.font)
+        self.bill_number_entry.setMinimum(1)
+        self.bill_number_entry.setMaximum(999999)
+        self.bill_number_entry.setValue(self.bill_number)
+        self.bill_number_entry.setFixedWidth(150)  # Make bill number entry larger
+        date_bill_layout.addWidget(bill_number_label)
+        date_bill_layout.addWidget(self.bill_number_entry)
+        
+        # Add stretch to push fields to the left
+        date_bill_layout.addSpacing(20)
+        
+        bill_layout.addLayout(date_bill_layout)
 
         # Transaction Type
         transaction_type_layout = QHBoxLayout()
@@ -252,10 +277,12 @@ class BillGenerator(QWidget):
 
         quantity_label = QLabel("Quantity:")
         quantity_label.setFont(self.font)
-        self.quantity_entry = QSpinBox()
+        self.quantity_entry = QDoubleSpinBox()
         self.quantity_entry.setFont(self.font)
-        self.quantity_entry.setMinimum(1)
+        self.quantity_entry.setMinimum(0.01)
         self.quantity_entry.setMaximum(10000)
+        self.quantity_entry.setDecimals(2)
+        self.quantity_entry.setValue(1.0)
         self.item_layout.addWidget(quantity_label)
         self.item_layout.addWidget(self.quantity_entry)
 
@@ -360,6 +387,32 @@ class BillGenerator(QWidget):
         self.btn_statement_generator.clicked.connect(lambda: self.stacked_widget.setCurrentWidget(self.statement_generator_widget))
 
         self.setLayout(main_layout)
+
+    def center_window(self):
+        """Center the window on the screen with adaptive sizing"""
+        desktop = QDesktopWidget()
+        screen_geometry = desktop.screenGeometry()
+        window_geometry = self.geometry()
+        
+        # Ensure window doesn't exceed screen size
+        max_width = min(1200, screen_geometry.width() - 100)
+        max_height = min(800, screen_geometry.height() - 100)
+        
+        # Resize if window is too large for screen
+        if window_geometry.width() > max_width or window_geometry.height() > max_height:
+            self.resize(max_width, max_height)
+            window_geometry = self.geometry()
+        
+        # Calculate center position
+        x = (screen_geometry.width() - window_geometry.width()) // 2
+        y = (screen_geometry.height() - window_geometry.height()) // 2
+        
+        # Ensure window doesn't go off-screen
+        x = max(0, min(x, screen_geometry.width() - window_geometry.width()))
+        y = max(0, min(y, screen_geometry.height() - window_geometry.height()))
+        
+        # Move window to center
+        self.move(x, y)
 
     def update_transaction_fields(self):
         transaction_type = self.transaction_type_combo.currentText()
@@ -491,7 +544,7 @@ class BillGenerator(QWidget):
             if item.get("type") == "Credit":
                 label = QLabel(f"Credit: ₹{item['total']:.2f} - Remarks: {item['remarks']}")
             else:
-                label = QLabel(f"{item['name']} - ₹{item['price']:.2f} x {item['quantity']} = ₹{item['total']:.2f}")
+                label = QLabel(f"{item['name']} - ₹{item['price']:.2f} x {item['quantity']:.2f} = ₹{item['total']:.2f}")
             label.setFont(self.font)
             remove_btn = QPushButton("✖")
             remove_btn.setFixedSize(24, 24)
@@ -515,7 +568,7 @@ class BillGenerator(QWidget):
         self.item_name_combo.setCurrentIndex(0)
         self.item_name_combo.setEditText("")
         self.price_entry.setValue(0.0)
-        self.quantity_entry.setValue(1)
+        self.quantity_entry.setValue(1.0)
 
     def calculate_total(self):
         total = sum(item["total"] for item in self.items)
@@ -529,7 +582,7 @@ class BillGenerator(QWidget):
             item_rows += f"""<tr>
             <td>{index + 1}</td>
             <td>{item['name']}</td>
-            <td>{item['quantity']}</td>
+            <td>{item['quantity']:.2f}</td>
             <td>₹{item['price']:.2f}</td>
             <td colspan="2">₹{item['total']:.2f}</td>
             </tr>"""
@@ -732,8 +785,19 @@ class BillGenerator(QWidget):
             return
 
         try:
-            self.update_bill_number()
-            self.save_bill_to_database()
+            # Get bill number from input field
+            bill_number = self.bill_number_entry.value()
+            
+            # Save the bill with the specified bill number
+            self.save_bill_to_database(bill_number)
+            
+            # Update the stored bill number to the next number after the current one
+            self.bill_number = bill_number + 1
+            with open(BILL_NUMBER_PATH, "w") as file:
+                file.write(str(self.bill_number))
+            # Update the bill number field to show the next number
+            self.bill_number_entry.setValue(self.bill_number)
+            
             # Only generate HTML bill for Debit transactions, as Credit will be part of ledger
             if transaction_type == "Debit":
                 self.generate_html_bill()
@@ -742,7 +806,7 @@ class BillGenerator(QWidget):
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to record transaction: {str(e)}")
 
-    def save_bill_to_database(self):
+    def save_bill_to_database(self, bill_number=None):
         try:
             with sqlite3.connect(DATABASE_PATH) as conn:
                 cursor = conn.cursor()
@@ -770,12 +834,15 @@ class BillGenerator(QWidget):
                     # Ensure the current self.items reflects the credit entry for display in items_list   
                     self.items = [credit_item]
 
+                # Use the provided bill number or fall back to stored bill number
+                bill_num = bill_number if bill_number is not None else self.bill_number
+
                 # Insert bill record into the 'bills' table
                 cursor.execute('''
                     INSERT INTO bills (bill_number, customer_key, date, items, total_amount, transaction_type, remarks)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                 ''', (
-                    self.bill_number,
+                    bill_num,
                     self.customer_combo.currentText(),
                     self.date_entry.text(),
                     items_json,
@@ -796,6 +863,8 @@ class BillGenerator(QWidget):
         self.clear_item_entry()
         self.total_display.setText("₹0.00")
         self.date_entry.setText(datetime.now().strftime("%d-%m-%Y"))
+        # Reset bill number to current bill number
+        self.bill_number_entry.setValue(self.bill_number)
         self.customer_combo.setCurrentIndex(0)
         self.transaction_type_combo.setCurrentIndex(0) # Reset to Debit
         self.remarks_entry.clear()

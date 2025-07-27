@@ -25,7 +25,7 @@ class ItemListWidget(QWidget):
             widget = QWidget()
             h_layout = QHBoxLayout()
             h_layout.setContentsMargins(0, 0, 0, 0)
-            label = QLabel(f"{item['name']} - ₹{item['price']:.2f} x {item['quantity']} = ₹{item['total']:.2f}")
+            label = QLabel(f"{item['name']} - ₹{item['price']:.2f} x {item['quantity']:.2f} = ₹{item['total']:.2f}")
             label.setFont(self.font)
             remove_btn = QPushButton("✖")
             remove_btn.setFixedSize(24, 24)

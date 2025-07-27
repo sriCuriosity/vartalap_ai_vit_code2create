@@ -84,7 +84,7 @@ class BillDeleteWidget(QWidget):
             for row, item in enumerate(bill.items):
                 self.items_table.insertRow(row)
                 self.items_table.setItem(row, 0, QTableWidgetItem(str(item.get('name', ''))))
-                self.items_table.setItem(row, 1, QTableWidgetItem(str(item.get('quantity', ''))))
+                self.items_table.setItem(row, 1, QTableWidgetItem(f"{item.get('quantity', 0):.2f}"))
                 self.items_table.setItem(row, 2, QTableWidgetItem(str(item.get('price', ''))))
                 self.items_table.setItem(row, 3, QTableWidgetItem(str(item.get('total', ''))))
                 self.items_table.setItem(row, 4, QTableWidgetItem(str(item.get('remarks', ''))))
