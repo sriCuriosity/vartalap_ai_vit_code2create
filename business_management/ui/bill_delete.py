@@ -72,10 +72,16 @@ class BillDeleteWidget(QWidget):
             return
         bill = self.db_manager.get_bill(int(bill_number))
         if bill:
+            # Convert date from yyyy-mm-dd to dd-mm-yyyy
+            date_parts = bill.date.split('-')
+            if len(date_parts) == 3:
+                formatted_date = f"{date_parts[2]}-{date_parts[1]}-{date_parts[0]}"
+            else:
+                formatted_date = bill.date
             details = f"Bill Number: {bill.bill_number}\n"
             details += f"Customer: {bill.customer_key}\n"
-            details += f"Date: {bill.date}\n"
-            details += f"Total Amount: ${bill.total_amount:.2f}\n"
+            details += f"Date: {formatted_date}\n"
+            details += f"Total Amount: ₹{bill.total_amount:.2f}\n"
             details += f"Transaction Type: {bill.transaction_type}\n"
             details += f"Remarks: {bill.remarks if bill.remarks else 'None'}\n"
             self.details_text.setText(details)

@@ -16,7 +16,11 @@ def ensure_initial_products(db_manager):
         if prod not in existing:
             db_manager.add_product(prod)
 
+from PyQt5.QtCore import pyqtSignal
+
 class ProductMasterWidget(QWidget):
+    product_list_updated = pyqtSignal()
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Product Master List")
@@ -129,6 +133,28 @@ class ProductMasterWidget(QWidget):
             success = self.db_manager.add_product(name, cost_price, stock_quantity, reorder_threshold, supplier_lead_time, category)
             if not success:
                 QMessageBox.warning(self, "Database Error", f"Product with name '{name}' may already exist.")
+            else:
+                self.product_list_updated.emit()
+                # Update suggestions.py file
+                try:
+                    suggestions_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../resources/suggestions.py')
+                    with open(suggestions_path, 'r', encoding='utf-8') as f:
+                        lines = f.readlines()
+                    # Find the line with SUGGESTIONS = INITIAL_PRODUCTS
+                    for i, line in enumerate(lines):
+                        if line.strip().startswith('SUGGESTIONS = INITIAL_PRODUCTS'):
+                            insert_index = i
+                            break
+                    else:
+                        insert_index = len(lines) - 1
+                    # Prepare new product string in the format used in INITIAL_PRODUCTS
+                    new_product_str = f'    "{name}",\n'
+                    # Insert before the SUGGESTIONS line
+                    lines.insert(insert_index, new_product_str)
+                    with open(suggestions_path, 'w', encoding='utf-8') as f:
+                        f.writelines(lines)
+                except Exception as e:
+                    print(f"Failed to update suggestions.py: {e}")
         else: # Update existing product
             product_to_update = Product(
                 id=self.selected_product_id,
@@ -140,6 +166,7 @@ class ProductMasterWidget(QWidget):
                 category=category
             )
             self.db_manager.update_product(product_to_update)
+            self.product_list_updated.emit()
         
             self.refresh_products()
         self.clear_form()

@@ -61,8 +61,8 @@ class StatementGeneratorWidget(QWidget):
         self.setLayout(layout)
 
     def generate_statement(self):
-        start_date = self.start_date_edit.date().toString("yyyy-MM-dd")
-        end_date = self.end_date_edit.date().toString("yyyy-MM-dd")
+        start_date = self.start_date_edit.date().toString("dd-MM-yyyy")
+        end_date = self.end_date_edit.date().toString("dd-MM-yyyy")
         customer_key = self.customer_combo.currentText()
         try:
             bills = self.db_manager.get_bills(start_date, end_date, customer_key if customer_key else None)

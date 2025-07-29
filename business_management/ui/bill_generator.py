@@ -43,6 +43,39 @@ class BillGeneratorWidget(QWidget):
 
     def init_ui(self):
         main_layout = QVBoxLayout()
+
+        # Horizontal layout for Bill number and Date entry side by side
+        top_layout = QHBoxLayout()
+
+        # Bill number entry
+        bill_number_layout = QHBoxLayout()
+        bill_number_label = QLabel("Bill Number:")
+        bill_number_label.setFont(self.font1)
+        self.bill_number_entry = QLineEdit()
+        self.bill_number_entry.setFont(self.font1)
+        self.bill_number_entry.setFixedWidth(100)
+        self.bill_number_entry.setText(str(self.bill_number))
+        self.bill_number_entry.editingFinished.connect(self.on_bill_number_changed)
+        bill_number_layout.addWidget(bill_number_label)
+        bill_number_layout.addWidget(self.bill_number_entry)
+
+        # Date entry
+        date_layout = QHBoxLayout()
+        date_label = QLabel("Date:")
+        date_label.setFont(self.font1)
+        self.date_entry = QLineEdit()
+        self.date_entry.setFont(self.font1)
+        self.date_entry.setFixedWidth(120)
+        self.date_entry.setText(datetime.datetime.now().strftime('%d-%m-%Y'))
+        date_layout.addWidget(date_label)
+        date_layout.addWidget(self.date_entry)
+
+        top_layout.addLayout(bill_number_layout)
+        top_layout.addSpacing(20)
+        top_layout.addLayout(date_layout)
+
+        main_layout.addLayout(top_layout)
+
         customer_layout = QHBoxLayout()
         customer_label = QLabel("Select Customer:")
         customer_label.setFont(self.font1)
@@ -52,17 +85,6 @@ class BillGeneratorWidget(QWidget):
         customer_layout.addWidget(customer_label)
         customer_layout.addWidget(self.customer_combo)
         main_layout.addLayout(customer_layout)
-
-        # Date entry
-        date_layout = QHBoxLayout()
-        date_label = QLabel("Date:")
-        date_label.setFont(self.font1)
-        self.date_entry = QLineEdit()
-        self.date_entry.setFont(self.font1)
-        self.date_entry.setText(datetime.datetime.now().strftime('%Y-%m-%d'))
-        date_layout.addWidget(date_label)
-        date_layout.addWidget(self.date_entry)
-        main_layout.addLayout(date_layout)
 
         # Transaction type
         transaction_type_layout = QHBoxLayout()
@@ -76,14 +98,14 @@ class BillGeneratorWidget(QWidget):
         main_layout.addLayout(transaction_type_layout)
 
         # Remarks
-        remarks_layout = QHBoxLayout()
+        """remarks_layout = QHBoxLayout()
         remarks_label = QLabel("Remarks:")
         remarks_label.setFont(self.font1)
         self.remarks_entry = QLineEdit()
         self.remarks_entry.setFont(self.font1)
         remarks_layout.addWidget(remarks_label)
         remarks_layout.addWidget(self.remarks_entry)
-        main_layout.addLayout(remarks_layout)
+        main_layout.addLayout(remarks_layout)"""
 
         # Credit amount (hidden by default)
         credit_amount_layout = QHBoxLayout()
@@ -139,7 +161,19 @@ class BillGeneratorWidget(QWidget):
         self.update_items_list()
         self.update_total()
         # Ensure current date is set
-        self.date_entry.setText(datetime.datetime.now().strftime('%Y-%m-%d'))
+        self.date_entry.setText(datetime.datetime.now().strftime('%d-%m-%Y'))
+
+    def on_bill_number_changed(self):
+        # Update bill number from entry and write to file
+        try:
+            new_bill_number = int(self.bill_number_entry.text())
+            if new_bill_number > 0:
+                self.bill_number = new_bill_number
+                with open(self.bill_number_path, "w") as file:
+                    file.write(str(self.bill_number))
+        except ValueError:
+            # Ignore invalid input
+            pass
 
     def add_item(self, item):
         if self.transaction_type_combo.currentText() == "Debit":
@@ -180,7 +214,7 @@ class BillGeneratorWidget(QWidget):
             self.total_display.hide()
             self.credit_amount_label.show()
             self.credit_amount_entry.show()
-            self.remarks_entry.show()
+            #self.remarks_entry.show()
             self.items.clear()
             self.update_items_list()
             self.update_total()
@@ -190,7 +224,7 @@ class BillGeneratorWidget(QWidget):
             self.total_display.show()
             self.credit_amount_label.hide()
             self.credit_amount_entry.hide()
-            self.remarks_entry.show()
+            #self.remarks_entry.show()
             self.credit_amount_entry.setValue(0.0)
 
     def clear_form(self):
@@ -199,10 +233,10 @@ class BillGeneratorWidget(QWidget):
         self.item_entry_widget.clear_fields()
         self.total_display.setText("₹0.00")
         # Set current date instead of clearing
-        self.date_entry.setText(datetime.datetime.now().strftime('%Y-%m-%d'))
+        self.date_entry.setText(datetime.datetime.now().strftime('%d-%m-%Y'))
         self.customer_combo.setCurrentIndex(0)
         self.transaction_type_combo.setCurrentIndex(0)
-        self.remarks_entry.clear()
+        #self.remarks_entry.clear()
         self.credit_amount_entry.setValue(0.0)
         self.update_transaction_fields()
 
@@ -218,7 +252,11 @@ class BillGeneratorWidget(QWidget):
             # Prepare bill data
             customer_key = self.customer_combo.currentText()
             date = self.date_entry.text()
-            remarks = self.remarks_entry.text().strip()
+            # Convert date from dd-mm-yyyy to yyyy-mm-dd for DB storage
+            """date_parts = date.split('-')
+            if len(date_parts) == 3:
+                date = f"{date_parts[2]}-{date_parts[1]}-{date_parts[0]}"""
+            remarks = ""#self.remarks_entry.text().strip()
             if transaction_type == "Debit":
                 items = self.items
                 total_amount = sum(item["total"] for item in items)

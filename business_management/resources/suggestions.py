@@ -58,6 +58,7 @@ INITIAL_PRODUCTS = [
     "வெள்ளை நைஸ் அவுல் (57	Fine white rice flakes	Vellai Nice Avul)",
     "வெள்ளை பொன்னி (58	White Ponni	Vellai Ponni)",
     "வெள்ளை மொச்சை (59	White field beans / White hyacinth beans	Vellai Mochai)",
-    "வெள்ளைக காராமணி (60	White cowpeas / White lobia	Vellai Kaaramani"
+    "வெள்ளைக காராமணி (60	White cowpeas / White lobia	Vellai Kaaramani",
+    "நாட்டு சக்கரை (61 Country sugar Naattu Sakkarai)"
 ]
 SUGGESTIONS = INITIAL_PRODUCTS
