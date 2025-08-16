@@ -1,88 +1,66 @@
-# Bill Management System
+# Business Management Software
 
-A Python-based bill management system with a PyQt5 GUI interface.
+## Objective
+
+This project is a comprehensive desktop application designed to help small to medium-sized businesses manage their daily operations. It provides tools for managing sales, customers, and products, as well as a suite of advanced analytics dashboards to offer insights into business performance. The primary goal is to provide a standalone, all-in-one solution for business management without relying on cloud-based services.
+
+## Technology Stack
+
+*   **Programming Language:** Python
+*   **GUI Framework:** PyQt5
+*   **Data Analysis and Manipulation:** pandas, numpy
+*   **Data Visualization:** matplotlib, squarify
+*   **Time Series Forecasting:** Prophet
+*   **Database:** SQLite
+*   **Fuzzy String Matching:** fuzzywuzzy
+*   **Packaging:** PyInstaller
 
 ## Features
 
-- Generate bills for sales (Debit) and payments (Credit)
-- Generate customer statements
-- Fuzzy search for items
-- Export bills and statements as HTML/Images
-- SQLite database for data persistence
+This application offers a wide range of features to cover various aspects of business management:
 
-## Setup
+*   **Bill Generation:** Create and manage bills for both sales (Debit) and payments (Credit).
+*   **Statement Generation:** Generate detailed financial statements for customers over a specified period.
+*   **Product Master:** A central module to add, edit, and manage all products.
+*   **Bill Deletion:** A secure way to delete incorrect or voided bills.
+*   **Exporting:** Export bills and statements to HTML or as an image for printing or sharing.
+*   **Fuzzy Search:** Quickly find customers and products with an intelligent fuzzy search.
+*   **Analytics Dashboards:**
+    *   **Inventory Intelligence:** Track stock levels, view product performance, and manage inventory.
+    *   **Customer Profitability:** Analyze which customers are most valuable to your business.
+    *   **Expense & Profit/Loss:** Track business expenses and view profit/loss statements.
+    *   **Product Analysis:** Get insights into sales trends and product performance.
+    *   **Customer Behavior:** Understand customer purchasing patterns and trends.
+    *   **Business Overview:** A high-level dashboard summarizing the overall health of the business.
+    *   **Sales Forecast:** Use historical data to forecast future sales.
+    *   **Advanced Analytics:** A dashboard for custom and in-depth data analysis.
 
-1. Create a virtual environment (recommended):
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
+## End User
 
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
+This software is intended for small to medium-sized business owners, managers, and administrative staff who need a powerful, offline tool to manage their business operations and make data-driven decisions.
 
-3. Run the application:
-```bash
-python src/main.py
-```
+## Installation Instructions
 
-## Project Structure
+1.  **Create a virtual environment (recommended):**
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    ```
 
-```
-project_root/
-├── src/
-│   ├── main.py                 # Application entry point
-│   ├── database/
-│   │   └── db_manager.py       # Database operations
-│   ├── ui/
-│   │   ├── bill_generator.py   # Bill generation UI
-│   │   └── statement_generator.py  # Statement generation UI
-│   ├── models/
-│   │   └── bill.py            # Bill data models
-│   └── utils/
-│       └── constants.py        # Application constants
-├── templates/                  # HTML templates
-├── requirements.txt           # Project dependencies
-└── README.md                 # This file
-```
+2.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3.  **Run the application:**
+    ```bash
+    python business_management/main.py
+    ```
 
 ## Usage
 
-1. **Generating Bills**
-   - Select customer
-   - Choose transaction type (Debit/Credit)
-   - Add items (for Debit) or enter amount (for Credit)
-   - Generate bill
-
-2. **Generating Statements**
-   - Select date range
-   - Choose customer (optional)
-   - Generate statement
-
-## Development
-
-The project follows a modular structure:
-- `models/`: Data structures and business logic
-- `ui/`: User interface components
-- `database/`: Database operations
-- `utils/`: Utility functions and constants
-
-## Building the Windows Executable
-
-To build a standalone Windows EXE:
-
-1. Make sure you have Python and pip installed.
-2. Open a command prompt in the project directory.
-3. Run:
-   ```
-   build_exe.bat
-   ```
-4. The EXE will be created in the `dist` folder as `BusinessManagement.exe`.
-
-The EXE will work on any Windows machine and will correctly handle all data files (database, templates, etc.).
+Once the application is running, you can use the navigation buttons at the top of the window to switch between the different modules, such as the "Bill Generator," "Product Master," or any of the analytics dashboards.
 
 ## License
 
-This project is licensed under the MIT License. 
+This project is licensed under the MIT License.
